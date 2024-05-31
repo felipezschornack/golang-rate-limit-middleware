@@ -1,0 +1,5 @@
+FROM alpine:3.20.0
+
+ENV TERM linux
+RUN apk --no-cache add apache2-utils bash
+ENTRYPOINT ["tail", "-f", "/dev/null"]

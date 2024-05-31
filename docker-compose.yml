@@ -1,0 +1,20 @@
+services:
+  rate-limiter:
+    build:
+      context: .
+      dockerfile: Dockerfile.rate
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+    depends_on:
+      - redis
+  redis:
+    image: 'redis:alpine3.20'
+    ports:
+      - '6379:6379'
+  ab:
+    build:
+      context: .
+      dockerfile: Dockerfile.ab
+    
