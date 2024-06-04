@@ -48,6 +48,24 @@ Body: you have reached the maximum number of requests or actions allowed within 
 
 ## Testes
 
+### Alternativa 1
+
+Utilizar o [Grafana K6](https://k6.io/) para realização dos testes de carga.
+```
+docker compose up -d --build rate-limiter redis grafana-k6
+```
+
+Para observar o resultado, execute:
+```
+docker compose logs -f grafana-k6
+```
+
+### Alternativa 2
+
+Executando os testes [aqui](./internal/limiter/redis-rate-limiter_test.go)
+
+### Alternativa 3
+
 Os testes podem ser feitos utilizando a ferramenta [Apache Benchmark](https://httpd.apache.org/docs/2.4/programs/ab.html).
 
 Para tanto, execute o comando:

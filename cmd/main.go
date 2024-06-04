@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/felipezschornack/golang-rate-limit-middleware/config"
+	"github.com/felipezschornack/golang-rate-limit-middleware/internal/db"
 	"github.com/felipezschornack/golang-rate-limit-middleware/internal/limiter"
 	"github.com/felipezschornack/golang-rate-limit-middleware/internal/middleware"
 	"github.com/go-chi/chi"
@@ -12,13 +14,23 @@ import (
 
 func main() {
 	addr := fmt.Sprintf(":%s", os.Getenv("WEB_SERVER_PORT"))
-	http.ListenAndServe(addr, getRouter())
+	http.ListenAndServe(addr, getRouter(getConfig()))
 }
 
-func getRouter() *chi.Mux {
-	r := chi.NewRouter()
+func getConfig() *config.EnvironmentVariables {
+	conf, err := config.LoadConfig("../")
+	if err != nil {
+		panic(err)
+	}
+	return conf
+}
 
-	rateLimiter := limiter.NewRedisRateLimiter()
+func getRouter(conf *config.EnvironmentVariables) *chi.Mux {
+
+	redis := db.GetRedisClient(conf)
+	rateLimiter := limiter.NewRedisRateLimiter(conf, redis)
+
+	r := chi.NewRouter()
 	middleware := middleware.NewRateLimiterMiddleware(rateLimiter)
 	r.Use(middleware.RateLimit)
 

@@ -17,4 +17,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.ab
+  grafana-k6:
+    image: grafana/k6
+    volumes:
+      - ./testes:/testes
+    command: run /testes/teste.js
+    depends_on:
+      - rate-limiter
     
